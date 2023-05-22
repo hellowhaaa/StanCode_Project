@@ -36,70 +36,50 @@ N_TURNS = 7
 
 def main():
     s = random_word()
-    dash = first(s)  # 一條線
-    print("The word looks like: " + dash)
-    number = N_TURNS
-    print("You have " + str(number) + " guesses left.")
+    print('The word looks like: ' + dash(s))
+    new_line = dash(s)
+    n_turn = N_TURNS
     while True:
-        guess = input("Your guess: ")
-        identify(guess)  # 判斷使用者是否輸入正確
-        new_guess = guess.upper()
-        dash = right_or_not(new_guess, s, dash)  # 判斷猜測的對與錯
-        number = loss_one_life(new_guess, s, number, dash)
-        if number == 0:
-            print("You are completely hung : ( ")
-            break
-        elif dash == s:
-            print("You win!!")
-            break
+        if n_turn > 0:
+            print("You have " + str(n_turn) + 'guesses left')
+            guess = input('Your guess: ')
+            big_guess = guess.upper()
+            new_line = in_or_not(big_guess, s, new_line)
+            print('The word looks like: ' + new_line)
+            if s.find(big_guess) == -1:
+                n_turn -= 1
+            if new_line == s:
+                print('you win')
+                break
         else:
-            print("The word looks like " + dash)
-    print("The word was: "+s)
+            print('You are compltetely hung')
+            break
 
 
-def first(s):  # 尚未猜測前的單字字樣都會是橫線
-    an = ""
-    for k in range(len(s)):
-        an += '-'
-    return an
+
+def dash(word):
+    line = ""
+    for i in range(len(word)):
+        line += '-'
+    return line
 
 
-def identify(guess):  # guess 有沒有輸入錯誤
-    while not guess.isalpha() or len(guess) > 1:
-        print("illegal format.")
-        guess = input("Your guess: ")
-    return guess
-
-
-def right_or_not(new_guess, s, dash):  # 判斷猜測的對與錯
-    if new_guess in s:
-        pre_ans = dash
-        ans = ""
-        j = s.find(new_guess)
+def in_or_not(big_guess, s, new_dash):
+    if s.find(big_guess) != -1:
+        print('You are correct!')
+        new = ""
         for i in range(len(s)):
             ch = s[i]
-            if ch == s[j]:
-                ans += s[i]
+            if big_guess == ch:
+                new += big_guess
             else:
-                ans += pre_ans[i]
-        dash = ans
-        print("You are correct!")
-        return dash
+                new += new_dash[i]
+        return new
     else:
-        for r in range(len(s)):
-            print("There is no " + new_guess + "'s in the word.")
-            return dash
+        print('There is no ' + big_guess + 'in the word.')
+        return new_dash
 
 
-def loss_one_life(new_guess, s, number, dash):
-    if s.find(new_guess) != -1:
-        if not dash == s:
-            print("You have " + str(number) + " guesses left.")
-    else:
-        number -= 1
-        if number > 0:
-            print("You have " + str(number) + " guesses left.")
-    return number
 
 
 def random_word():
